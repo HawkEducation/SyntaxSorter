@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SYNTAX_STRIKE // v1.0</title>
+    <style>
+        body { background: #050505; color: #00FFCC; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        #terminal { border: 2px solid #00FFCC; padding: 30px; width: 500px; box-shadow: 0 0 20px rgba(0,255,204,0.2); text-align: center; }
+        .code-block { background: #000; border: 1px solid #333; padding: 15px; margin: 20px 0; color: #fff; font-size: 1.1rem; min-height: 50px; display: flex; align-items: center; justify-content: center; }
+        input { background: transparent; border: none; border-bottom: 2px solid #00FFCC; color: #00FFCC; font-family: inherit; font-size: 1.2rem; text-align: center; outline: none; width: 100%; text-transform: uppercase; }
+        .stat-row { display: flex; justify-content: space-between; margin-top: 20px; font-size: 0.8rem; opacity: 0.7; }
+        .flash-green { animation: flashG 0.3s; }
+        .flash-red { animation: flashR 0.3s; }
+        @keyframes flashG { from { background: rgba(0,255,204,0.4); } to { background: transparent; } }
+        @keyframes flashR { from { background: rgba(255,49,49,0.4); } to { background: transparent; } }
+    </style>
+</head>
+<body id="bg">
+<div id="terminal">
+    <div id="header">SYNTAX_STRIKE // COMPILER_MODE</div>
+    <div class="code-block" id="display">PRESS ENTER TO INITIALIZE</div>
+    <input type="text" id="input" autofocus>
+    <div class="stat-row">
+        <div>COMPILED: <span id="score">0</span></div>
+        <div>MEAN_RT: <span id="rt">0.00</span>s</div>
+    </div>
+</div>
+
+<script>
+    const snippets = [
+        { c: 'print("Hello World")', l: 'PYTHON' },
+        { c: 'console.log("Hello World");', l: 'JAVASCRIPT' },
+        { c: 'fmt.Println("Hello World")', l: 'GO' },
+        { c: 'puts "Hello World"', l: 'RUBY' },
+        { c: 'std::cout << "Hello World";', l: 'C++' },
+        { c: 'System.out.println("Hello");', l: 'JAVA' },
+        { c: 'echo "Hello World";', l: 'PHP' },
+        { c: 'printf("Hello World");', l: 'C' }
+    ];
+
+    let score = 0, start = Date.now(), totalTime = 0, current;
+
+    function next() {
+        current = snippets[Math.floor(Math.random() * snippets.length)];
+        document.getElementById('display').innerText = current.c;
+        start = Date.now();
+    }
+
+    document.getElementById('input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const val = e.target.value.toUpperCase().trim();
+            const correct = val === current.l;
+            
+            if (correct) {
+                score++;
+                totalTime += (Date.now() - start) / 1000;
+                document.body.className = 'flash-green';
+            } else {
+                document.body.className = 'flash-red';
+            }
+
+            document.getElementById('score').innerText = score;
+            document.getElementById('rt').innerText = (totalTime / (score || 1)).toFixed(2);
+            e.target.value = '';
+            setTimeout(() => { document.body.className = ''; }, 300);
+            next();
+        }
+    });
+
+    next();
+</script>
+</body>
+</html>
